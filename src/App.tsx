@@ -1,26 +1,57 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import './App.css';
+import { StoreState } from './store';
+import { Todo, fetchTodos, deleteTodo } from './store/actions';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+interface AppProps {
+  todos: Todo[];
+  fetchTodos: () => {};
+  deleteTodo: typeof deleteTodo;
 }
 
-export default App;
+interface AppState {
+  fetching: boolean;
+}
+
+class App extends Component<AppProps, AppState> {
+  constructor(props: AppProps) {
+    super(props);
+    this.state = { fetching: false };
+  }
+
+  componentDidUpdate(prevProps: AppProps) {
+    if (prevProps.todos !== this.props.todos) {
+      this.setState({ fetching: false });
+    }
+  }
+
+  onFetchClick() {
+    this.setState({ fetching: true });
+    this.props.fetchTodos();
+  }
+
+  renderList(): JSX.Element[] {
+    return this.props.todos.map((todo: Todo) => (
+      <p onClick={() => this.props.deleteTodo(todo.id)} key={todo.id}>
+        {todo.title}
+      </p>
+    ));
+  }
+  render() {
+    return this.state.fetching ? (
+      <>Loading</>
+    ) : (
+      <>
+        <button onClick={this.onFetchClick.bind(this)}>Fetch</button>
+        {this.renderList()}
+      </>
+    );
+  }
+}
+
+const mapStateToProps = (state: StoreState) => {
+  return { todos: state.todos };
+};
+
+export default connect(mapStateToProps, { fetchTodos, deleteTodo })(App);
