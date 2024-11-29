@@ -1,6 +1,16 @@
+import { Button } from '@mui/material';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import './App.css';
+import { Auth } from './components/Auth/Auth';
+import { Button as CustomButton } from './components/Button/Button';
+import { Counter } from './components/Counter';
+import { Heroes } from './components/Heroes';
+import { Text } from './components/polymorphic/Text';
+import { Timer } from './components/Timer';
+import { UserContextProvider } from './context/UserContext';
+
 import { StoreState } from './store';
 import { Todo, fetchTodos, deleteTodo } from './store/actions';
 
@@ -26,7 +36,7 @@ class App extends Component<AppProps, AppState> {
     }
   }
 
-  onFetchClick() {
+  onFetchClick(e: React.MouseEvent<HTMLButtonElement>) {
     this.setState({ fetching: true });
     this.props.fetchTodos();
   }
@@ -38,14 +48,33 @@ class App extends Component<AppProps, AppState> {
       </p>
     ));
   }
+
   render() {
-    return this.state.fetching ? (
-      <>Loading</>
-    ) : (
-      <>
-        <button onClick={this.onFetchClick.bind(this)}>Fetch</button>
-        {this.renderList()}
-      </>
+    return (
+      <UserContextProvider>
+        <Button component={Link} to='/mui' variant='contained'>
+          Go To Mui
+        </Button>
+
+        <Auth />
+        <Timer />
+        <Heroes />
+        <Counter />
+        {this.state.fetching ? (
+          <Text as='label' htmlFor='some' color='primary'>
+            Loading
+          </Text>
+        ) : (
+          <>
+            {this.renderList()}
+            <CustomButton
+              btnType='fetch'
+              onClick={this.onFetchClick.bind(this)}
+              btnName='Fetch'
+            />
+          </>
+        )}
+      </UserContextProvider>
     );
   }
 }

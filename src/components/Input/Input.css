@@ -1,0 +1,22 @@
+.customInput {
+  margin: 8px;
+  box-sizing: border-box;
+}
+
+.small {
+  padding: 6px 8px;
+}
+
+.medium {
+  padding: 10px;
+  font-size: 1rem;
+}
+
+.large {
+  padding: 12px;
+  font-size: 1.2rem;
+}
+
+.customInput:focus {
+  background-color: lightblue;
+}
